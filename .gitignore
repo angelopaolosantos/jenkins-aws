@@ -1,0 +1,4 @@
+*.pem
+.terraform*
+.aws_credentials/credentials
+terraform.tfstate*
