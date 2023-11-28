@@ -1,6 +1,37 @@
 - name: Kubernetes Prerequisites
-  hosts: all
+  hosts: jenkins_server
   become: true
   tasks:
     - name: Ping my hosts
       ansible.builtin.ping:
+    - name: Download jenkins keyring into APT
+      ansible.builtin.get_url:
+        url: https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key
+        dest: /usr/share/keyrings/jenkins-keyring.asc
+    - name: Update APT sources list
+      shell:
+        cmd: echo deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] https://pkg.jenkins.io/debian-stable binary/ | sudo tee /etc/apt/sources.list.d/jenkins.list > /dev/null
+      args:
+        creates: /etc/apt/sources.list.d/jenkins.list
+    - name: Install the latest version of Jenkins
+      ansible.builtin.apt:
+        name: jenkins
+        update_cache: true
+    - name: Install the latest version of Jenkins
+      ansible.builtin.apt:
+        pkg:
+        - fontconfig
+        - openjdk-17-jre
+    - name: systemctl daemon-reload
+      ansible.builtin.systemd:
+        daemon_reload: yes
+    - name: Restart kubelet service
+      ansible.builtin.systemd:
+        name: jenkins
+        state: restarted
+        enabled: yes
+    - name: Fetch jenkins initial admin password
+      ansible.builtin.fetch:
+        src: /var/jenkins_home/secrets/initialAdminPassword
+        dest: fetch/{{ inventory_hostname }}/initialAdminPassword
+        flat: yes
