@@ -2,3 +2,4 @@
 .terraform*
 .aws_credentials/credentials
 terraform.tfstate*
+ansible/fetch
