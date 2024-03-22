@@ -4,34 +4,31 @@
   tasks:
     - name: Ping my hosts
       ansible.builtin.ping:
+
+    - name: Update repository and install Java
+      ansible.builtin.apt:
+        update_cache: true
+        pkg:
+        - fontconfig
+        - openjdk-17-jre
+
     - name: Download jenkins keyring into APT
       ansible.builtin.get_url:
         url: https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key
         dest: /usr/share/keyrings/jenkins-keyring.asc
+
     - name: Update APT sources list
-      become_user: ubuntu
       shell:
-        cmd: echo deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] https://pkg.jenkins.io/debian-stable binary/ | sudo tee /etc/apt/sources.list.d/jenkins.list > /dev/null
+        cmd: echo deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] https://pkg.jenkins.io/debian-stable binary/ | tee /etc/apt/sources.list.d/jenkins.list > /dev/null
       args:
         creates: /etc/apt/sources.list.d/jenkins.list
+
     - name: Install the latest version of Jenkins
       ansible.builtin.apt:
         update_cache: true
         name: jenkins
-        state: latest
-    - name: Install Java
-      ansible.builtin.apt:
-        pkg:
-        - fontconfig
-        - openjdk-17-jre
-    - name: systemctl daemon-reload
-      ansible.builtin.systemd:
-        daemon_reload: yes
-    - name: Restart jenkins service
-      ansible.builtin.systemd:
-        name: jenkins
-        state: restarted
-        enabled: yes
+        state: present
+
     - name: Fetch jenkins initial admin password
       ansible.builtin.fetch:
         src: /var/lib/jenkins/secrets/initialAdminPassword
