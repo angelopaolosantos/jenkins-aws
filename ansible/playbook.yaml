@@ -11,6 +11,7 @@
         pkg:
         - fontconfig
         - openjdk-17-jre
+        - docker.io
 
     - name: Download jenkins keyring into APT
       ansible.builtin.get_url:
@@ -34,3 +35,21 @@
         src: /var/lib/jenkins/secrets/initialAdminPassword
         dest: fetch/{{ inventory_hostname }}/initialAdminPassword
         flat: yes
+
+    - name: Grant Jenkins user permission to docker deamon.
+      ansible.builtin.user:
+        name: jenkins
+        groups: docker
+        append: yes
+
+    - name: Grant Ubuntu user permission to docker deamon.
+      ansible.builtin.user:
+        name: ubuntu
+        groups: docker
+        append: yes
+
+    - name: Restart docker
+      ansible.builtin.systemd_service:
+        state: restarted
+        daemon_reload: true
+        name: docker

@@ -167,7 +167,30 @@ resource "aws_instance" "jenkins_server_instance" {
     private_key = file("${path.cwd}/.ssh/jenkins_key.pem")
     timeout     = "4m"
   }
+
+  root_block_device {
+    delete_on_termination = true
+    encrypted = false
+    volume_size = 30
+    volume_type = "gp3"
+    throughput = 125
+    iops = 3000
+  }
 }
+
+# resource "aws_ebs_volume" "example" {
+#   availability_zone = aws_instance.jenkins_server_instance.availability_zone
+#   size              = 40
+#   tags = {
+#     Name = "ebs_volume"
+#   }
+# }
+
+# resource "aws_volume_attachment" "example" {
+#   device_name = "/dev/sdh"
+#   volume_id   = aws_ebs_volume.example.id
+#   instance_id = aws_instance.example.id
+# }
 
 # Ansible Section 
 
