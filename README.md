@@ -1,11 +1,27 @@
 # Jenkins on AWS EC2
 
-### .ssh folder
-You can manually create ssh private and public keys. `ssh-keygen -t rsa -b 2048` then add key to AWS console. This is optional.
+## Prerequisites
+Before running terraform do the following requirements below.
 
+### .ssh folder
 Terraform will generate key pair and will save the private key as jenkins_key.pem
 
-## Install Terraform Collection for Ansible
+You can manually create ssh private and public keys. with `ssh-keygen -t rsa -b 2048` then add key to AWS console. This is optional.
+
+### .credentials folder
+Create `credentials` file with the same layout as below:
+
+```
+[default]
+aws_access_key_id=AKIAIOSFODNN7EXAMPLE
+aws_secret_access_key=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+
+[user1]
+aws_access_key_id=AKIAIOSFODNN7EXAMPLE
+aws_secret_access_key=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+```
+
+### Install Terraform Collection for Ansible
 `ansible-galaxy collection install cloud.terraform`
 
 ## Run Terraform
