@@ -59,6 +59,17 @@ resource "aws_security_group" "jenkins_server_sg" {
       security_groups  = []
       self             = false
     },
+    {
+      cidr_blocks      = ["0.0.0.0/0", ]
+      description      = "Jenkins to Docker Access"
+      from_port        = 32768 
+      to_port          = 60999
+      protocol         = "tcp"
+      ipv6_cidr_blocks = []
+      prefix_list_ids  = []
+      security_groups  = []
+      self             = false
+    },
   ]
   tags = {
     Name                               = "jenkins_server_sec_group"
