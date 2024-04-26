@@ -1,4 +1,4 @@
-- name: Kubernetes Prerequisites
+- name: Jenkins Prerequisites
   hosts: jenkins_server
   become: true
   tasks:
